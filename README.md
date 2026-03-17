@@ -1,5 +1,9 @@
 \# Juicy Playbook v1.0
 
+!\[Build PDF](https://github.com/javonjw/juicy-playbook/actions/workflows/build-pdf.yml/badge.svg)
+
+``
+
 
 
 A complete infrastructure playbook for building and maintaining the \*\*Juicy Server Stack\*\*:
