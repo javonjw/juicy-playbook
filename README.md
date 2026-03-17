@@ -1,10 +1,30 @@
+\# Juicy Playbook v1.0
 
-# Juicy Stack — Quick Start
 
-Open **Juicy-Playbook-v1.0.md** for the full guide, or print **Juicy-Playbook-v1.0.pdf**.
 
-Common next steps:
-- Build Vaultwarden and save secrets.
-- Bring up Open WebUI + Ollama and set model to `phi3:mini`.
-- Deploy the Pi compose and claim feeder keys.
-- Build Status API and Dashboard, then add monitors in Uptime Kuma.
+A complete infrastructure playbook for building and maintaining the \*\*Juicy Server Stack\*\*:
+
+a hybrid system using:
+
+
+
+\- \*\*Lubuntu Host Server\*\* (Docker, Coolify, Traefik, Ollama, Vaultwarden, AMP Game Servers)
+
+\- \*\*Raspberry Pi (JuicyPi)\*\* (Home Assistant, Mosquitto, Mealie, ADS‑B Feeder Stack)
+
+\- \*\*Juicy Panel\*\* (Status API + front-end dashboard)
+
+\- \*\*GitHub Automation\*\* (PDF builds, versioning, releases)
+
+
+
+This repository contains all configuration, scripts, and documentation required to \*\*rebuild the entire environment from scratch\*\*.
+
+
+
+\---
+
+
+
+\## 📂 Repository Structure
+
