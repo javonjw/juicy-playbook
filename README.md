@@ -6,6 +6,8 @@ https://img.shields.io/github/license/javonjw/juicy-playbook
 https://img.shields.io/github/repo-size/javonjw/juicy-playbook  
 https://img.shields.io/github/issues/javonjw/juicy-playbook  
 
+**Operational Guide:** [docs/Operational-Guide.md](docs/Operational-Guide.md)
+
 A complete infrastructure playbook for building and maintaining the **Juicy Server Stack**:  
 a hybrid system using:
 
