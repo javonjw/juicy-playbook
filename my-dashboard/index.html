@@ -7,45 +7,62 @@
   <style>
     :root{
       --bg:#0d0d0f;--surface:#141417;--border:#222228;--accent:#f0a500;
-      --green:#00e57a;--red:#ff3d5a;--muted:#888;--text:#e8e8f0;
-      --blue:#52a8ff;--purple:#b37cff
+      --green:#00e57a;--red:#ff3d5a;--muted:#9aa;--text:#e8e8f0;
+      --blue:#52a8ff;--purple:#b37cff;--warn:#f39c12
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{background:var(--bg);color:var(--text);font-family:system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;padding:40px 24px}
-    .container{max-width:1100px;margin:0 auto}
-    header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--border);padding-bottom:18px;margin-bottom:28px;gap:12px;flex-wrap:wrap}
+    .container{max-width:1150px;margin:0 auto}
+    header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--border);padding-bottom:18px;margin-bottom:18px;gap:12px;flex-wrap:wrap}
     .logo{font-size:36px;font-weight:800}
     .logo span{background:linear-gradient(135deg,#f0a500,#e05a00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
     .logo small{display:block;font-size:12px;color:var(--muted);letter-spacing:3px}
-    .refresh-info{font-size:12px;color:var(--muted);text-align:right}#last-updated{color:var(--accent)}
-    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-    .stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+    .right{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+    .refresh{font-size:12px;color:var(--muted)} #last-updated{color:var(--accent)}
+    .badges{display:flex;gap:8px;flex-wrap:wrap}
+    .badge{font-size:10px;border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--muted)}
+    .banner{display:none;margin:10px 0;padding:10px 12px;border:1px solid #664400;background:#2a2105;color:#ffd27d;border-radius:8px;font-size:13px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:8px 0 16px}
+    .stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center}
     .stat-value{font-size:22px;font-weight:800;margin-bottom:4px}
     .stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
-    .stat.online .stat-value{color:var(--green)}.stat.offline .stat-value{color:var(--red)}.stat.total .stat-value{color:var(--accent)}.stat.info .stat-value{color:var(--blue)}
+    .stat.online .stat-value{color:var(--green)} .stat.offline .stat-value{color:var(--red)} .stat.total .stat-value{color:var(--accent)} .stat.info .stat-value{color:var(--blue)}
     .section-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
-    .service{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;transition:border-color .2s,transform .15s}
+    .service{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;transition:border-color .2s,transform .15s}
     .service:hover{border-color:var(--accent);transform:translateY(-1px)}
     .service-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--border)}
     .service-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .service-type{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
-    .service-info{flex:1}.status-badge{display:flex;align-items:center;gap:6px;font-size:11px;text-transform:uppercase;letter-spacing:1px}
-    .dot{width:8px;height:8px;border-radius:50%}.running .dot{background:var(--green);box-shadow:0 0 6px var(--green)}.stopped .dot{background:var(--red)}
-    .running .status-text{color:var(--green)}.stopped .status-text{color:var(--red)}
+    .service-info{flex:1}
+    .status-badge{display:flex;align-items:center;gap:6px;font-size:11px;text-transform:uppercase;letter-spacing:1px}
+    .dot{width:8px;height:8px;border-radius:50%}
+    .running .dot{background:var(--green);box-shadow:0 0 6px var(--green)} .stopped .dot{background:var(--red)}
+    .running .status-text{color:var(--green)} .stopped .status-text{color:var(--red)}
     .message{text-align:center;padding:60px;color:var(--muted)}
     footer{margin-top:28px;padding-top:16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-    /* small helper badge row */
-    .badges{display:flex;gap:8px;flex-wrap:wrap}
-    .badge{font-size:10px;border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--muted)}
+    /* copy button */
+    .copy{position:absolute;top:8px;right:8px;font-size:11px;border:1px solid var(--border);border-radius:6px;padding:4px 6px;color:var(--muted);background:#101013;cursor:pointer}
+    .copy:hover{border-color:var(--accent);color:var(--text)}
+    /* gauges */
+    .gauges{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .g{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px}
+    .g .label{font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase}
+    .bar{height:8px;background:#222;border-radius:6px;overflow:hidden}
+    .fill{height:100%;background:linear-gradient(90deg,#19c37d,#52a8ff);width:0%}
+    @media (max-width:720px){
+      .stats{grid-template-columns:repeat(2,1fr)}
+      .gauges{grid-template-columns:1fr}
+      header{align-items:flex-start}
+    }
   </style>
 </head>
 <body>
 <div class="container">
   <header>
     <div class="logo"><span>Juicy</span> Server Hub<small>jkeasy.com infrastructure</small></div>
-    <div class="refresh-info">
-      Auto-refresh every 10s<br/>Last updated: <span id="last-updated">—</span>
+    <div class="right">
+      <div class="refresh">Auto‑refresh 10s • Last updated: <span id="last-updated">—</span></div>
       <div class="badges">
         <span class="badge" id="b-aircraft">✈️ —</span>
         <span class="badge" id="b-mlat">MLAT —</span>
@@ -55,11 +72,27 @@
     </div>
   </header>
 
+  <div id="banner" class="banner">⚠️ <strong>Pi Flight Stack appears offline.</strong> (Ultrafeeder, FR24, FlightAware, RadarBox)</div>
+
   <div class="stats">
     <div class="stat total"><div class="stat-value" id="s-total">—</div><div class="stat-label">Total</div></div>
     <div class="stat online"><div class="stat-value" id="s-online">—</div><div class="stat-label">Online</div></div>
     <div class="stat offline"><div class="stat-value" id="s-offline">—</div><div class="stat-label">Offline</div></div>
     <div class="stat info"><div class="stat-value" id="s-flight">—</div><div class="stat-label">Aircraft (Hub)</div></div>
+  </div>
+
+  <!-- metrics mini bars -->
+  <div class="gauges" id="gauges">
+    <div class="g">
+      <div class="label">Host CPU/RAM</div>
+      <div class="bar"><div class="fill" id="host-cpu"></div></div>
+      <div class="bar" style="margin-top:6px"><div class="fill" id="host-ram"></div></div>
+    </div>
+    <div class="g">
+      <div class="label">Pi CPU/RAM</div>
+      <div class="bar"><div class="fill" id="pi-cpu"></div></div>
+      <div class="bar" style="margin-top:6px"><div class="fill" id="pi-ram"></div></div>
+    </div>
   </div>
 
   <div id="content"><div class="message">Connecting...</div></div>
@@ -74,29 +107,43 @@ const STATUS_URL = API_BASE + '/api/status';
 const FLIGHT_SUMMARY_URL = API_BASE + '/api/flight-summary';   // optional
 const METRICS_URL = API_BASE + '/api/metrics';                 // optional
 
-// icons and sections
 const ICONS={game:"🎮",docker:"🐳",web:"⚙️",voice:"🎙️",password:"🔑",home:"🏠",ai:"🤖",flight:"✈️",food:"🍽️",pi:"🥧",default:"📡"};
 const SECTIONS={home:'Smart Home',password:'Security',ai:'AI / Apps',web:'Management',game:'Game Servers',flight:'Flight Stack',food:'Apps',pi:'Infrastructure'};
 
 function now(){return new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});}
 async function tryJSON(url){ try{ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw new Error(r.status); return await r.json(); } catch{ return null; } }
 function setBadge(id, txt){ const el=document.getElementById(id); if(el) el.textContent=txt; }
+function pct(v){ const n=parseFloat(v); return isFinite(n)?Math.max(0,Math.min(100,n)):0; }
+function setBar(id, val){ const el=document.getElementById(id); if(el) el.style.width=pct(val)+'%'; }
 
-/** Build the pinned Flight Hub row (always visible; shows stats if available) */
+/** sanitize URLs: keep http/https, else use protocol-relative (//) for host:port */
+function toHref(u){
+  if(!u) return '#';
+  const s = String(u).trim();
+  if(/^https?:\/\//i.test(s)) return s;
+  if(s.startsWith('//')) return s;
+  return '//' + s;
+}
+
+/** Copy to clipboard with tiny feedback */
+async function copyText(t, btn){
+  try{ await navigator.clipboard.writeText(t); if(btn){ btn.textContent='Copied'; setTimeout(()=>btn.textContent='Copy',900);} } catch{}
+}
+
+/** Build pinned Flight Hub row: always rendered */
 function buildFlightHubTile(summary){
   const aircraft = (summary && summary.aircraft!=null) ? summary.aircraft : '—';
   const mlat = (summary && summary.mlat!=null) ? String(summary.mlat).toUpperCase() : '—';
-
   return `
     <div class="section-title">Flight Hub</div>
     <div class="grid">
-      <a class="service running" href="https://flights.jkeasy.com" target="_blank" rel="noopener">
+      <a class="service" href="https://flights.jkeasy.com" target="_blank" rel="noopener">
         <div class="service-icon">✈️</div>
         <div class="service-info">
           <div class="service-name">Open Flight Map</div>
           <div class="service-type">flight</div>
         </div>
-        <div class="status-badge"><div class="dot"></div><span class="status-text">Open</span></div>
+        <div class="status-badge"><div class="dot" style="background:var(--blue)"></div><span class="status-text" style="color:var(--blue)">Open</span></div>
       </a>
       <div class="service">
         <div class="service-icon">🧭</div>
@@ -104,18 +151,25 @@ function buildFlightHubTile(summary){
           <div class="service-name">Aircraft: ${aircraft}</div>
           <div class="service-type">MLAT: ${mlat}</div>
         </div>
-        <div class="status-badge"><div class="dot" style="background:var(--blue)"></div><span class="status-text" style="color:var(--blue)">Summary</span></div>
+        <div class="status-badge"><div class="dot" style="background:var(--accent)"></div><span class="status-text" style="color:var(--accent)">Summary</span></div>
       </div>
     </div>
   `;
 }
 
-/** Build the rest of the grid grouped by section from /api/status */
+/** Build status groups from /api/status */
 function buildGrouped(status){
   const entries = Object.entries(status||{});
   const online = entries.filter(([,v])=>v.status==='running').length;
   s_total.textContent=entries.length; s_online.textContent=online; s_offline.textContent=entries.length-online;
 
+  // flight offline banner
+  const namesToCheck=['ultrafeeder','fr24','piaware','rbfeeder'];
+  const allFlightKeys = namesToCheck.filter(k => status[k]);
+  const allDown = allFlightKeys.length>0 && allFlightKeys.every(k => status[k].status!=='running');
+  document.getElementById('banner').style.display = allDown ? 'block' : 'none';
+
+  // group services
   const groups={};
   for(const[,v] of entries){
     const s=SECTIONS[v.type] || 'Other';
@@ -131,16 +185,20 @@ function buildGrouped(status){
       const icon = ICONS[v.type]||ICONS.default;
       const sc=v.status==='running'?'running':'stopped';
       const label=v.status==='running'?'Online':'Offline';
-      const url=v.url||'#';
+      const url=toHref(v.url||'#');
       const players=(v.players!=null?` • ${v.players} players`:'' );
-      h+=`<a class="service ${sc}" href="${url.startsWith('http')?'':(v.type==='game'?'http://':'https://')}${url}" target="_blank" rel="noopener">
-            <div class="service-icon">${icon}</div>
-            <div class="service-info">
-              <div class="service-name">${v.name}${players}</div>
-              <div class="service-type">${v.type}</div>
-            </div>
-            <div class="status-badge"><div class="dot"></div><span class="status-text">${label}</span></div>
-          </a>`;
+      const safeUrlText = (v.url || '').replace(/^https?:\/\//,'');
+      const copyAttr = `data-copy="${(v.url||'').startsWith('http')?v.url:('https:'+url)}"`;
+      h+=`
+        <a class="service ${sc}" href="${url}" target="_blank" rel="noopener">
+          <div class="service-icon">${icon}</div>
+          <div class="service-info">
+            <div class="service-name">${v.name}${players}</div>
+            <div class="service-type">${v.type}</div>
+          </div>
+          <div class="status-badge"><div class="dot"></div><span class="status-text">${label}</span></div>
+          <button class="copy" ${copyAttr} title="${safeUrlText}" onclick="copyText(this.getAttribute('data-copy'), this)">Copy</button>
+        </a>`;
     }
     h+='</div>';
   }
@@ -151,14 +209,15 @@ function buildGrouped(status){
 async function load(){
   last_updated.textContent=now();
 
-  // Required status
+  // Required: /api/status
   const status = await tryJSON(STATUS_URL);
   if(!status){
     content.innerHTML = `<div class="message">Cannot reach API<br/><small>${STATUS_URL}</small></div>`;
+    document.getElementById('banner').style.display='none';
     return;
   }
 
-  // Optional add-ons
+  // Optional: /api/flight-summary
   const fs = await tryJSON(FLIGHT_SUMMARY_URL);
   if(fs && typeof fs.aircraft !== 'undefined'){
     s_flight.textContent = fs.aircraft;
@@ -166,15 +225,19 @@ async function load(){
     setBadge('b-mlat', `MLAT ${String(fs.mlat).toUpperCase()}`);
   } else {
     s_flight.textContent = '—';
-    setBadge('b-aircraft', '✈️ —'); setBadge('b-mlat','MLAT —');
+    setBadge('b-aircraft','✈️ —'); setBadge('b-mlat','MLAT —');
   }
 
+  // Optional: /api/metrics (update badges + mini bars)
   const m = await tryJSON(METRICS_URL);
   if(m && m.host && m.pi){
     setBadge('b-host', `Host CPU ${m.host.cpu ?? '—'} / RAM ${m.host.ram ?? '—'}`);
     setBadge('b-pi',   `Pi CPU ${m.pi.cpu ?? '—'} / RAM ${m.pi.ram ?? '—'}`);
+    setBar('host-cpu', m.host.cpu); setBar('host-ram', m.host.ram);
+    setBar('pi-cpu',   m.pi.cpu);   setBar('pi-ram',   m.pi.ram);
   } else {
-    setBadge('b-host', 'Host —'); setBadge('b-pi','Pi —');
+    setBadge('b-host','Host —'); setBadge('b-pi','Pi —');
+    setBar('host-cpu',0); setBar('host-ram',0); setBar('pi-cpu',0); setBar('pi-ram',0);
   }
 
   // Render: pinned Flight Hub + grouped services
@@ -184,3 +247,7 @@ async function load(){
 }
 
 load(); setInterval(load, 10000);
+</script>
+</body>
+</html>
+``
