@@ -12,15 +12,17 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install pandoc
+      - name: Install pandoc and wkhtmltopdf
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc
+          sudo apt-get install -y pandoc wkhtmltopdf
 
       - name: Build PDF
         run: |
           mkdir -p build
-          pandoc Juicy-Playbook-v1.0.md -o build/Juicy-Playbook-v1.0.pdf
+          pandoc Juicy-Playbook-v1.0.md \
+            --pdf-engine=wkhtmltopdf \
+            -o build/Juicy-Playbook-v1.0.pdf
 
       - name: Upload PDF
         uses: actions/upload-artifact@v4
