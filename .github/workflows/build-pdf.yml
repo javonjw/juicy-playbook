@@ -1,0 +1,26 @@
+name: Build PDF
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pandoc
+        run: sudo apt-get install -y pandoc
+
+      - name: Build PDF
+        run: |
+          mkdir -p build
+          pandoc Juicy-Playbook-v1.0.md -o build/Juicy-Playbook-v1.0.pdf
+
+      - name: Upload PDF Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: juicy-playbook-pdf
+          path: build/Juicy-Playbook-v1.0.pdf
+``
