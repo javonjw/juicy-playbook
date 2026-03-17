@@ -46,7 +46,12 @@
     <div class="logo"><span>Juicy</span> Server Hub<small>jkeasy.com infrastructure</small></div>
     <div class="refresh-info">
       Auto-refresh every 10s<br/>Last updated: <span id="last-updated">—</span>
-      <div class="badges"><span class="badge" id="b-aircraft">✈️ —</span><span class="badge" id="b-mlat">MLAT —</span><span class="badge" id="b-host">Host —</span><span class="badge" id="b-pi">Pi —</span></div>
+      <div class="badges">
+        <span class="badge" id="b-aircraft">✈️ —</span>
+        <span class="badge" id="b-mlat">MLAT —</span>
+        <span class="badge" id="b-host">Host —</span>
+        <span class="badge" id="b-pi">Pi —</span>
+      </div>
     </div>
   </header>
 
@@ -59,3 +64,123 @@
 
   <div id="content"><div class="message">Connecting...</div></div>
 
+  <footer><span>Juicy Panel</span><span>104.8.77.206</span></footer>
+</div>
+
+<script>
+/** ======= CONFIG ======= **/
+const API_BASE = 'https://api.jkeasy.com';
+const STATUS_URL = API_BASE + '/api/status';
+const FLIGHT_SUMMARY_URL = API_BASE + '/api/flight-summary';   // optional
+const METRICS_URL = API_BASE + '/api/metrics';                 // optional
+
+// icons and sections
+const ICONS={game:"🎮",docker:"🐳",web:"⚙️",voice:"🎙️",password:"🔑",home:"🏠",ai:"🤖",flight:"✈️",food:"🍽️",pi:"🥧",default:"📡"};
+const SECTIONS={home:'Smart Home',password:'Security',ai:'AI / Apps',web:'Management',game:'Game Servers',flight:'Flight Stack',food:'Apps',pi:'Infrastructure'};
+
+function now(){return new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+async function tryJSON(url){ try{ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw new Error(r.status); return await r.json(); } catch{ return null; } }
+function setBadge(id, txt){ const el=document.getElementById(id); if(el) el.textContent=txt; }
+
+/** Build the pinned Flight Hub row (always visible; shows stats if available) */
+function buildFlightHubTile(summary){
+  const aircraft = (summary && summary.aircraft!=null) ? summary.aircraft : '—';
+  const mlat = (summary && summary.mlat!=null) ? String(summary.mlat).toUpperCase() : '—';
+
+  return `
+    <div class="section-title">Flight Hub</div>
+    <div class="grid">
+      <a class="service running" href="https://flights.jkeasy.com" target="_blank" rel="noopener">
+        <div class="service-icon">✈️</div>
+        <div class="service-info">
+          <div class="service-name">Open Flight Map</div>
+          <div class="service-type">flight</div>
+        </div>
+        <div class="status-badge"><div class="dot"></div><span class="status-text">Open</span></div>
+      </a>
+      <div class="service">
+        <div class="service-icon">🧭</div>
+        <div class="service-info">
+          <div class="service-name">Aircraft: ${aircraft}</div>
+          <div class="service-type">MLAT: ${mlat}</div>
+        </div>
+        <div class="status-badge"><div class="dot" style="background:var(--blue)"></div><span class="status-text" style="color:var(--blue)">Summary</span></div>
+      </div>
+    </div>
+  `;
+}
+
+/** Build the rest of the grid grouped by section from /api/status */
+function buildGrouped(status){
+  const entries = Object.entries(status||{});
+  const online = entries.filter(([,v])=>v.status==='running').length;
+  s_total.textContent=entries.length; s_online.textContent=online; s_offline.textContent=entries.length-online;
+
+  const groups={};
+  for(const[,v] of entries){
+    const s=SECTIONS[v.type] || 'Other';
+    (groups[s]=groups[s]||[]).push(v);
+  }
+  const order=['Flight Stack','Game Servers','Smart Home','AI / Apps','Apps','Management','Infrastructure','Security','Other'];
+
+  let h='';
+  for(const sec of order){
+    if(!groups[sec]) continue;
+    h+=`<div class="section-title">${sec}</div><div class="grid">`;
+    for(const v of groups[sec]){
+      const icon = ICONS[v.type]||ICONS.default;
+      const sc=v.status==='running'?'running':'stopped';
+      const label=v.status==='running'?'Online':'Offline';
+      const url=v.url||'#';
+      const players=(v.players!=null?` • ${v.players} players`:'' );
+      h+=`<a class="service ${sc}" href="${url.startsWith('http')?'':(v.type==='game'?'http://':'https://')}${url}" target="_blank" rel="noopener">
+            <div class="service-icon">${icon}</div>
+            <div class="service-info">
+              <div class="service-name">${v.name}${players}</div>
+              <div class="service-type">${v.type}</div>
+            </div>
+            <div class="status-badge"><div class="dot"></div><span class="status-text">${label}</span></div>
+          </a>`;
+    }
+    h+='</div>';
+  }
+  return h || `<div class="message">No services defined.</div>`;
+}
+
+/** Main loader */
+async function load(){
+  last_updated.textContent=now();
+
+  // Required status
+  const status = await tryJSON(STATUS_URL);
+  if(!status){
+    content.innerHTML = `<div class="message">Cannot reach API<br/><small>${STATUS_URL}</small></div>`;
+    return;
+  }
+
+  // Optional add-ons
+  const fs = await tryJSON(FLIGHT_SUMMARY_URL);
+  if(fs && typeof fs.aircraft !== 'undefined'){
+    s_flight.textContent = fs.aircraft;
+    setBadge('b-aircraft', `✈️ ${fs.aircraft}`);
+    setBadge('b-mlat', `MLAT ${String(fs.mlat).toUpperCase()}`);
+  } else {
+    s_flight.textContent = '—';
+    setBadge('b-aircraft', '✈️ —'); setBadge('b-mlat','MLAT —');
+  }
+
+  const m = await tryJSON(METRICS_URL);
+  if(m && m.host && m.pi){
+    setBadge('b-host', `Host CPU ${m.host.cpu ?? '—'} / RAM ${m.host.ram ?? '—'}`);
+    setBadge('b-pi',   `Pi CPU ${m.pi.cpu ?? '—'} / RAM ${m.pi.ram ?? '—'}`);
+  } else {
+    setBadge('b-host', 'Host —'); setBadge('b-pi','Pi —');
+  }
+
+  // Render: pinned Flight Hub + grouped services
+  const hub = buildFlightHubTile(fs);
+  const body = buildGrouped(status);
+  content.innerHTML = hub + body;
+}
+
+load(); setInterval(load, 10000);
