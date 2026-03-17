@@ -139,8 +139,55 @@ def status():
             "status": "running" if up(PI, 9090) else "stopped",
         },
     }
-
     return jsonify(data)
+
+# ------------------------
+# New placeholder endpoints
+# ------------------------
+
+@app.get("/api/metrics")
+def metrics():
+    """
+    Placeholder metrics until real collection is implemented.
+    Later: expose CPU%, RAM%, Disk% for Lubuntu; CPU%/RAM% for the Pi.
+    """
+    return jsonify({
+        "host": {"cpu": "pending", "ram": "pending", "disk": "pending"},
+        "pi":   {"cpu": "pending", "ram": "pending"}
+    })
+
+@app.get("/api/flight-summary")
+def flight_summary():
+    """
+    Placeholder summary for Flight Hub tile.
+    Later: parse Ultrafeeder JSON (e.g., /data/receiver.json) for aircraft count
+    and MLAT status; combine with feeder reachability for a quick health view.
+    """
+    return jsonify({
+        "aircraft": "pending",
+        "mlat": "pending",
+        "feeder_health": {
+            "ultrafeeder": "pending",
+            "fr24": "pending",
+            "piaware": "pending",
+            "rbfeeder": "pending"
+        }
+    })
+
+@app.get("/api/services")
+def services():
+    """
+    Returns a simple service list so the dashboard can build sections
+    even before /api/status or other endpoints are fully wired.
+    """
+    return jsonify({
+        "services": [
+            "amp","ai","vault","dashboard",
+            "minecraft","valheim",
+            "ultrafeeder","fr24","piaware","rbfeeder",
+            "homeassistant","mealie"
+        ]
+    })
 
 @app.get("/health")
 def health():
