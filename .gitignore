@@ -1,0 +1,29 @@
+# Juicy Playbook Git Ignore
+
+# Python
+__pycache__/
+*.pyc
+
+# Docker artifacts
+*.tar
+*.img
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Editor stuff
+.vscode/
+.idea/
+
+# Build artifacts
+dist/
+build/
+
+# Secrets (never commit)
+secrets.env
+*.key
+*.pem
