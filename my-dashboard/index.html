@@ -1,84 +1,61 @@
-
-<!doctype html><html lang="en"><head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Juicy Server Hub</title>
-<style>
-:root{--bg:#0d0d0f;--surface:#141417;--border:#222228;--accent:#f0a500;--green:#00e57a;--red:#ff3d5a;--muted:#888;--text:#e8e8f0}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;padding:40px 24px}
-.container{max-width:1000px;margin:0 auto}
-header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--border);padding-bottom:18px;margin-bottom:28px;gap:12px;flex-wrap:wrap}
-.logo{font-size:36px;font-weight:800}
-.logo span{background:linear-gradient(135deg,#f0a500,#e05a00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.logo small{display:block;font-size:12px;color:var(--muted);letter-spacing:3px}
-.refresh-info{font-size:12px;color:var(--muted);text-align:right}#last-updated{color:var(--accent)}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
-.stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
-.stat-value{font-size:28px;font-weight:800;margin-bottom:4px}
-.stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
-.stat.online .stat-value{color:var(--green)}.stat.offline .stat-value{color:var(--red)}.stat.total .stat-value{color:var(--accent)}
-.section-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
-.service{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;transition:border-color .2s,transform .15s}
-.service:hover{border-color:var(--accent);transform:translateY(-1px)}
-.service-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--border)}
-.service-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.service-type{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
-.service-info{flex:1}.status-badge{display:flex;align-items:center;gap:6px;font-size:11px;text-transform:uppercase;letter-spacing:1px}
-.dot{width:8px;height:8px;border-radius:50%}.running .dot{background:var(--green);box-shadow:0 0 6px var(--green)}.stopped .dot{background:var(--red)}
-.running .status-text{color:var(--green)}.stopped .status-text{color:var(--red)}
-.message{text-align:center;padding:60px;color:var(--muted)}
-footer{margin-top:28px;padding-top:16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-</style></head>
-<body><div class="container">
-<header>
- <div class="logo"><span>Juicy</span> Server Hub<small>jkeasy.com infrastructure</small></div>
- <div class="refresh-info">Auto-refresh every 10s<br/>Last updated: <span id="last-updated">—</span></div>
-</header>
-<div class="stats">
-  <div class="stat total"><div class="stat-value" id="s-total">—</div><div class="stat-label">Total</div></div>
-  <div class="stat online"><div class="stat-value" id="s-online">—</div><div class="stat-label">Online</div></div>
-  <div class="stat offline"><div class="stat-value" id="s-offline">—</div><div class="stat-label">Offline</div></div>
-</div>
-<div id="content"><div class="message">Connecting...</div></div>
-<footer><span>Juicy Panel</span><span>104.8.77.206</span></footer>
-</div>
-<script>
-const API='https://api.jkeasy.com/api/status';
-const ICONS={game:"🎮",docker:"🐳",web:"⚙️",voice:"🎙️",password:"🔑",home:"🏠",ai:"🤖",flight:"✈️",food:"🍽️",pi:"🥧",default:"📡"};
-const SECTIONS={home:'Management',docker:'Management',password:'Management',ai:'Management',web:'Management',game:'Game Servers',flight:'Flight Tracking',food:'Management',pi:'Infrastructure'};
-function now(){return new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});} 
-async function load(){
-  try{
-    const res = await fetch(API,{cache:'no-store'});
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const data = await res.json();
-    const entries = Object.entries(data);
-    const online = entries.filter(([,v])=>v.status==='running').length;
-    s_total.textContent=entries.length; s_online.textContent=online; s_offline.textContent=entries.length-online;
-    last_updated.textContent=now();
-    const groups={}; for(const[,v] of entries){const s=SECTIONS[v.type]||'Other'; (groups[s]=groups[s]||[]).push(v);} 
-    let h='';
-    for(const sec of ['Management','Game Servers','Flight Tracking','Infrastructure','Other']){
-      if(!groups[sec]) continue;
-      h+=`<div class="section-title">${sec}</div><div class="grid">`;
-      for(const v of groups[sec]){
-        const icon = ICONS[v.type]||ICONS.default; const sc=v.status==='running'?'running':'stopped'; const label=v.status==='running'?'Online':'Offline';
-        const url = v.url||'#'; const players=(v.players!=null?` • ${v.players} players`:'' );
-        h+=`<a class="service ${sc}" href="${url}" target="_blank">
-              <div class="service-icon">${icon}</div>
-              <div class="service-info">
-                <div class="service-name">${v.name}${players}</div>
-                <div class="service-type">${v.type}</div>
-              </div>
-              <div class="status-badge"><div class="dot"></div><span class="status-text">${label}</span></div>
-            </a>`;
-      }
-      h+='</div>';
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Juicy Server Hub</title>
+  <style>
+    :root{
+      --bg:#0d0d0f;--surface:#141417;--border:#222228;--accent:#f0a500;
+      --green:#00e57a;--red:#ff3d5a;--muted:#888;--text:#e8e8f0;
+      --blue:#52a8ff;--purple:#b37cff
     }
-    content.innerHTML=h;
-  }catch(e){ content.innerHTML=`<div class="message">Cannot reach API<br/><small>${e.message}</small></div>`; }
-}
-load(); setInterval(load, 10000);
-</script></body></html>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;padding:40px 24px}
+    .container{max-width:1100px;margin:0 auto}
+    header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--border);padding-bottom:18px;margin-bottom:28px;gap:12px;flex-wrap:wrap}
+    .logo{font-size:36px;font-weight:800}
+    .logo span{background:linear-gradient(135deg,#f0a500,#e05a00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .logo small{display:block;font-size:12px;color:var(--muted);letter-spacing:3px}
+    .refresh-info{font-size:12px;color:var(--muted);text-align:right}#last-updated{color:var(--accent)}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+    .stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+    .stat-value{font-size:22px;font-weight:800;margin-bottom:4px}
+    .stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+    .stat.online .stat-value{color:var(--green)}.stat.offline .stat-value{color:var(--red)}.stat.total .stat-value{color:var(--accent)}.stat.info .stat-value{color:var(--blue)}
+    .section-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+    .service{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;transition:border-color .2s,transform .15s}
+    .service:hover{border-color:var(--accent);transform:translateY(-1px)}
+    .service-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--border)}
+    .service-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .service-type{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+    .service-info{flex:1}.status-badge{display:flex;align-items:center;gap:6px;font-size:11px;text-transform:uppercase;letter-spacing:1px}
+    .dot{width:8px;height:8px;border-radius:50%}.running .dot{background:var(--green);box-shadow:0 0 6px var(--green)}.stopped .dot{background:var(--red)}
+    .running .status-text{color:var(--green)}.stopped .status-text{color:var(--red)}
+    .message{text-align:center;padding:60px;color:var(--muted)}
+    footer{margin-top:28px;padding-top:16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+    /* small helper badge row */
+    .badges{display:flex;gap:8px;flex-wrap:wrap}
+    .badge{font-size:10px;border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--muted)}
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo"><span>Juicy</span> Server Hub<small>jkeasy.com infrastructure</small></div>
+    <div class="refresh-info">
+      Auto-refresh every 10s<br/>Last updated: <span id="last-updated">—</span>
+      <div class="badges"><span class="badge" id="b-aircraft">✈️ —</span><span class="badge" id="b-mlat">MLAT —</span><span class="badge" id="b-host">Host —</span><span class="badge" id="b-pi">Pi —</span></div>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat total"><div class="stat-value" id="s-total">—</div><div class="stat-label">Total</div></div>
+    <div class="stat online"><div class="stat-value" id="s-online">—</div><div class="stat-label">Online</div></div>
+    <div class="stat offline"><div class="stat-value" id="s-offline">—</div><div class="stat-label">Offline</div></div>
+    <div class="stat info"><div class="stat-value" id="s-flight">—</div><div class="stat-label">Aircraft (Hub)</div></div>
+  </div>
+
+  <div id="content"><div class="message">Connecting...</div></div>
+
