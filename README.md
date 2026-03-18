@@ -1,23 +1,28 @@
-# Juicy Playbook v1.0
+# Juicy Stack - Current Working State
+*Last updated: March 18, 2026*
 
-https://github.com/javonjw/juicy-playbook/actions/workflows/build-pdf.yml/badge.svg  
-https://img.shields.io/github/v/release/javonjw/juicy-playbook  
-https://img.shields.io/github/license/javonjw/juicy-playbook  
-https://img.shields.io/github/repo-size/javonjw/juicy-playbook  
-https://img.shields.io/github/issues/javonjw/juicy-playbook  
+## 🖥️ Lubuntu Host (juicy-server)
+| Service | Type | Port | Access | Notes |
+|---------|------|------|--------|-------|
+| AMP | Native | 8080 | `amp.jkeasy.com:8080` | Backend `172.17.0.1:8080` |
+| NPM | Docker | 80/443 | `npm.jkeasy.com` | Forwards to AMP via bridge |
+| Coolify | Docker | 8000 | `coolify.jkeasy.com` | Working |
+| Status API | Docker | 5000 | `status-api:5000` | Internal |
+| Juicy Dashboard | Docker | 80 | `juicy-dashboard:80` | Internal |
 
-**Operational Guide:** [docs/Operational-Guide.md](docs/Operational-Guide.md)
+## 🌐 Network Configuration
+- **Public IP**: `104.8.77.206`
+- **DNS**: `amp.jkeasy.com` A record → `104.8.77.206`
+- **Firewall**: UFW active, ports 22, 80, 443, 8080 open
+- **Docker Bridge**: `172.17.0.1` (host gateway)
 
-A complete infrastructure playbook for building and maintaining the **Juicy Server Stack**:  
-a hybrid system using:
+## 🧪 Verified Working Commands
+```bash
+# Test AMP locally
+curl -I http://127.0.0.1:8080
 
-- **Lubuntu Host Server** (Docker, Coolify, Traefik, Ollama, Vaultwarden, AMP Game Servers)
-- **Raspberry Pi (JuicyPi)** (Home Assistant, Mosquitto, Mealie, ADS‑B Feeder Stack)
-- **Juicy Panel** (Status API + front-end dashboard)
-- **GitHub Automation** (PDF builds, versioning, releases)
+# Test AMP from NPM container
+docker exec -it npm curl -I http://172.17.0.1:8080
 
-This repository contains all configuration, scripts, and documentation required to **rebuild the entire environment from scratch**.
-
----
-
-## 📂 Repository Structure
+# Check AMP status
+sudo ss -tulpn | grep 8080
