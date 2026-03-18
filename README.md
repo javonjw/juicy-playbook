@@ -10,73 +10,90 @@ A complete infrastructure playbook for building and maintaining the **Juicy Serv
 a hybrid system using:
 
 - 🖥️ **Lubuntu Host Server** (Docker, Coolify, Nginx Proxy Manager, Ollama, Vaultwarden, AMP Game Servers)
-- 🥧 **Raspberry Pi (JuicyPi)** (Home Assistant, Mosquitto, Mealie, ADS‑B Feeder Stack)
+- 🥧 **Raspberry Pi (JuicyPi)** (Home Assistant, Mosquitto, Mealie, Flight Tracking Stack: Ultrafeeder, PiAware, FR24, RadarBox)
 - 📊 **Juicy Panel** (Status API + front-end dashboard)
 - 🤖 **GitHub Automation** (PDF builds, versioning, releases)
 
 ---
 
-## 🚀 **CURRENT WORKING STATUS (March 2026)**
+## 🚀 **CURRENT WORKING STATUS (March 18, 2026)**
 
-### ✅ **Lubuntu Host - Fully Operational**
+### 🖥️ **Lubuntu Host (juicy-server) - 104.8.77.206**
+| Service | URL | Port | Status |
+|---------|-----|------|--------|
+| AMP Game Servers | `http://amp.jkeasy.com:8080` | 8080 | ✅ Working |
+| Open WebUI (AI) | `http://104.8.77.206:3001` | 3001 | ✅ Working |
+| Vaultwarden | `http://104.8.77.206:8082` | 8082 | ✅ Working |
+| Nginx Proxy Manager | `http://104.8.77.206:81` | 81 | ✅ Working |
+| Coolify | `http://104.8.77.206:8000` | 8000 | ✅ Working |
+| Ollama API | Internal | 11434 | ✅ Working |
 
-| Service | Status | Access | Port |
-|---------|--------|--------|------|
-| **AMP Game Servers** | ✅ Working | `http://amp.jkeasy.com:8080` | 8080 |
-| **Nginx Proxy Manager** | ✅ Working | `http://104.8.77.206:81` | 80/443/81 |
-| **Open WebUI** | ✅ Working | `http://104.8.77.206:3001` | 3001 |
-| **Vaultwarden** | ✅ Working | `http://104.8.77.206:8082` | 8082 |
-| **Ollama + Phi-3 Mini** | ✅ Working | Local API on 11434 | 11434 |
-| **Coolify** | ✅ Working | `http://104.8.77.206:8000` | 8000 |
-| **Docker** | ✅ Working | Container runtime | N/A |
+### 🥧 **Raspberry Pi (juicypi) - 192.168.1.200**
+| Service | URL | Port | Status |
+|---------|-----|------|--------|
+| Flight Radar Map (Ultrafeeder) | `http://192.168.1.200:8080` | 8080 | ✅ Working |
+| FlightAware (PiAware) | `http://192.168.1.200:8081` | 8081 | ✅ Working |
+| Flightradar24 (FR24) | `http://192.168.1.200:8755` | 8755 | ✅ Working |
+| RadarBox (rbfeeder) | Internal | - | ✅ Working |
+| Home Assistant | `http://192.168.1.200:8123` | 8123 | ✅ Working |
+| Mealie | `http://192.168.1.200:9090` | 9090 | ✅ Working |
+| Mosquitto (MQTT) | Internal | 1883 | ✅ Working |
 
 ---
 
-## 📊 **PORT MAP**
+## 📊 **COMPLETE PORT MAP**
 
-| Service | Port | Notes |
-|---------|------|-------|
-| SSH | 22 | Remote access |
-| HTTP | 80 | NPM |
-| HTTPS | 443 | NPM with SSL |
-| NPM Admin | 81 | Nginx Proxy Manager UI |
-| Coolify | 8000 | PaaS manager |
-| AMP | 8080 | Game server management |
-| Vaultwarden | 8082 | Password manager |
-| Open WebUI | 3001 | AI chat interface |
-| Ollama API | 11434 | Local AI backend |
+### Lubuntu Host Ports
+| Port | Service | Purpose |
+|------|---------|---------|
+| 22 | SSH | Remote access |
+| 80 | HTTP | Nginx Proxy Manager |
+| 81 | NPM Admin | NPM web UI |
+| 443 | HTTPS | NPM SSL |
+| 3001 | Open WebUI | AI chat interface |
+| 8080 | AMP | Game servers |
+| 8082 | Vaultwarden | Password manager |
+| 8000 | Coolify | PaaS manager |
+| 11434 | Ollama API | Local AI backend |
+
+### Raspberry Pi Ports
+| Port | Service | Purpose |
+|------|---------|---------|
+| 22 | SSH | Remote access |
+| 8080 | Ultrafeeder | Flight radar map |
+| 8081 | PiAware | FlightAware status |
+| 8755 | FR24feed | Flightradar24 status |
+| 8123 | Home Assistant | Home automation |
+| 9090 | Mealie | Recipe manager |
+| 1883 | Mosquitto | MQTT broker |
 
 ---
 
 ## 🌐 **NETWORK CONFIGURATION**
 
-- **Public IP**: `104.8.77.206`
-- **Hostname**: `juicy-server`
-- **DNS Records**:
-  - `amp.jkeasy.com` → `104.8.77.206`
-- **Firewall**: UFW active with all above ports open
-- **Swap**: 16GB on SSD, swappiness=30
+### AT&T BGW320-500 Settings
+- **IP Passthrough**: Enabled for Lubuntu host
+- **Public IP**: `104.8.77.206` (Lubuntu host)
+- **DHCP Range**: `192.168.1.64 - 192.168.1.253`
+- **DNS**: `192.168.1.254`
 
----
+### WiFi Configuration (CRITICAL)
+| Device | Band | SSID | Status |
+|--------|------|------|--------|
+| Lubuntu Server | 2.4 GHz | `ATTwyKq7BZ` | ✅ Fixed |
+| Raspberry Pi | 2.4 GHz | `ATTwyKq7BZ` | ✅ Fixed via BSSID lock |
 
-## 🐳 **DOCKER NETWORK NOTES**
-
-| Connection | Method |
-|------------|--------|
-| NPM → AMP | `http://172.17.0.1:8080` |
-| Open WebUI → Ollama | `http://localhost:11434` |
-| NPM → Vaultwarden | `http://172.17.0.1:8082` |
-
----
-
-## 🔧 **SYSTEM OPTIMIZATION**
-
-### 16GB Swap
+**Pi WiFi Lock Configuration:**
 ```bash
-sudo fallocate -l 16G /swapfile
-sudo chmod 600 /swapfile
-sudo mkswap /swapfile
-sudo swapon /swapfile
-echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-echo 'vm.swappiness=30' | sudo tee -a /etc/sysctl.conf
-sudo sysctl -p
+# /etc/wpa_supplicant/wpa_supplicant.conf
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=US
+
+network={
+    ssid="ATTwyKq7BZ"
+    psk="t8xz9t73imsw"
+    bssid=D0:FC:D0:76:6B:44
+    frequency=2412
+    scan_freq=2412
+}
