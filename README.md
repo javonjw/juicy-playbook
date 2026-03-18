@@ -97,3 +97,4 @@ network={
     frequency=2412
     scan_freq=2412
 }
+Update documentation - March 18, 2026
