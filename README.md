@@ -54,7 +54,6 @@ a hybrid system using:
 - **Hostname**: `juicy-server`
 - **DNS Records**:
   - `amp.jkeasy.com` → `104.8.77.206`
-  - `vault.jkeasy.com` → `104.8.77.206` (optional)
 - **Firewall**: UFW active with all above ports open
 - **Swap**: 16GB on SSD, swappiness=30
 
@@ -70,15 +69,14 @@ a hybrid system using:
 
 ---
 
-## 🤖 **AI SERVICES**
+## 🔧 **SYSTEM OPTIMIZATION**
 
-### Ollama
+### 16GB Swap
 ```bash
-# Install
-curl -fsSL https://ollama.com/install.sh | sh
-
-# Run Phi-3 Mini
-ollama run phi3:mini
-
-# API endpoint
-curl http://localhost:11434/api/tags
+sudo fallocate -l 16G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+echo 'vm.swappiness=30' | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
