@@ -19,10 +19,10 @@ A complete infrastructure playbook for building and maintaining the **Juicy Serv
 | Service | URL | Port | Status |
 |---------|-----|------|--------|
 | AMP Game Servers | `https://amp.jkeasy.com` | 8080 | ✅ Working |
-| Open WebUI (AI) | `https://ai.jkeasy.com` | 3000 | ✅ Working |
+| Open WebUI (AI) | `http://104.8.77.206:3001` | 3001 | ✅ Working |
 | Vaultwarden | `https://vault.jkeasy.com` | (Coolify) | ✅ Working |
 | Coolify | `http://104.8.77.206:8000` | 8000 | ✅ Working |
-| Juicy Dashboard | `https://dashboard.jkeasy.com` | 8085 | ✅ Working (via Traefik) |
+| Juicy Dashboard | `https://dashboard.jkeasy.com` | 8085 | ✅ Working |
 | Status API | Internal | 5000 | ✅ Working |
 | Traefik Proxy | `http://104.8.77.206` | 80/443 | ✅ Working |
 
@@ -34,6 +34,46 @@ A complete infrastructure playbook for building and maintaining the **Juicy Serv
 | Flightradar24 | `https://fr24.jkeasy.com` | 8755 | ✅ Working |
 | Home Assistant | `https://homeassistant.jkeasy.com` | 8123 | ✅ Working |
 | Mealie | `https://mealie.jkeasy.com` | 9090 | ✅ Working |
+
+---
+
+## 🤖 **AI MODELS (Ollama)**
+
+All models available in Open WebUI at `http://104.8.77.206:3001`
+
+### Lightning Fast Models
+| Model | Size | Use Case |
+|-------|------|----------|
+| `qwen2.5:0.5b` | 350 MB | Ultra-fast Q&A |
+| `tinyllama` | 750 MB | General chat |
+| `smollm:1.7b` | 1.1 GB | Simple tasks |
+| `phi` | 1.6 GB | Smart & fast |
+| `gemma2:2b` | 1.5 GB | Google's efficient |
+
+### Coding Specialists
+| Model | Size | Use Case |
+|-------|------|----------|
+| `deepseek-coder:1.3b` | 650 MB | HTML/CSS/JS |
+| `codeqwen:1.5b` | 900 MB | Code specialist |
+| `codegemma:2b` | 1.5 GB | Google's coding |
+| `stable-code:3b` | 1.7 GB | Best balance |
+| `codellama:7b` | 3.8 GB | Complex tasks |
+
+### Jan-Code 4B Variants
+| Model | Size | Quality |
+|-------|------|---------|
+| `jan-code-q4ks` | 2.6 GB | Fastest |
+| `jan-code-q4km` | 2.7 GB | **Best balance** |
+| `jan-code-q5km` | 3.2 GB | Higher quality |
+| `jan-code-q80` | 4.7 GB | Near-lossless |
+
+### Document & Vision
+| Model | Size | Use Case |
+|-------|------|----------|
+| `moondream` | 1.6 GB | OCR, image text |
+| `llava:7b` | 4.2 GB | Image Q&A |
+| `minicpm-v` | 2.8 GB | Document Q&A |
+| `nomic-embed-text` | 274 MB | Document search |
 
 ---
 
@@ -49,7 +89,7 @@ A complete infrastructure playbook for building and maintaining the **Juicy Serv
 | 8080 | AMP | Game servers |
 | 8085 | Juicy Dashboard | Main status dashboard |
 | 5000 | Status API | Backend for dashboard |
-| 3000 | Open WebUI | AI chat interface |
+| 3001 | Open WebUI | AI chat interface |
 
 ### Raspberry Pi Ports
 | Port | Service | Purpose |
@@ -82,6 +122,6 @@ sudo ufw allow 443/tcp
 sudo ufw allow 8000/tcp
 sudo ufw allow 8080/tcp
 sudo ufw allow 8085/tcp
-sudo ufw allow 3000/tcp
+sudo ufw allow 3001/tcp
 sudo ufw allow 5000/tcp
 sudo ufw --force enable
