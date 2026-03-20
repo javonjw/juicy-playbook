@@ -15,16 +15,16 @@ A complete infrastructure playbook for building and maintaining the **Juicy Serv
 
 ## 🚀 **WORKING SERVICES (March 20, 2026)**
 
-### 🖥️ **Lubuntu Host (juicy-server) - 104.8.77.206**
+### 🖥️ **Lubuntu Host (juicy-server) - YOUR_PUBLIC_IP**
 | Service | URL | Port | Status |
 |---------|-----|------|--------|
 | AMP Game Servers | `https://amp.jkeasy.com` | 8080 | ✅ Working |
-| Open WebUI (AI) | `http://104.8.77.206:3001` | 3001 | ✅ Working |
+| Open WebUI (AI) | `http://YOUR_PUBLIC_IP:3001` | 3001 | ✅ Working |
 | Vaultwarden | `https://vault.jkeasy.com` | (Coolify) | ✅ Working |
-| Coolify | `http://104.8.77.206:8000` | 8000 | ✅ Working |
+| Coolify | `http://YOUR_PUBLIC_IP:8000` | 8000 | ✅ Working |
 | Juicy Dashboard | `https://dashboard.jkeasy.com` | 8085 | ✅ Working |
 | Status API | Internal | 5000 | ✅ Working |
-| Traefik Proxy | `http://104.8.77.206` | 80/443 | ✅ Working |
+| Traefik Proxy | `http://YOUR_PUBLIC_IP` | 80/443 | ✅ Working |
 
 ### 🥧 **Raspberry Pi (juicypi) - 192.168.1.200**
 | Service | URL | Port | Status |
@@ -39,7 +39,7 @@ A complete infrastructure playbook for building and maintaining the **Juicy Serv
 
 ## 🤖 **AI MODELS (Ollama)**
 
-All models available in Open WebUI at `http://104.8.77.206:3001`
+All models available in Open WebUI at `http://YOUR_PUBLIC_IP:3001`
 
 ### Lightning Fast Models
 | Model | Size | Use Case |
@@ -108,11 +108,11 @@ All models available in Open WebUI at `http://104.8.77.206:3001`
 
 ### AT&T BGW320-500 Settings
 - **IP Passthrough**: Enabled for Lubuntu host
-- **Public IP**: `104.8.77.206` (Lubuntu host)
+- **Public IP**: `YOUR_PUBLIC_IP` (Lubuntu host)
 - **DHCP Lease**: 99 days (prevents renewal drops)
 - **DHCP Range**: `192.168.1.64 - 192.168.1.253`
 - **DNS**: `192.168.1.254`
-- **Port Forwarding**: Ports 80, 443 forwarded to `104.8.77.206`
+- **Port Forwarding**: Ports 80, 443 forwarded to `YOUR_PUBLIC_IP`
 
 ### Firewall Rules (UFW)
 ```bash
