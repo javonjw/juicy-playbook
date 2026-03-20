@@ -6,24 +6,25 @@
 
 A complete infrastructure playbook for building and maintaining the **Juicy Server Stack**:
 
-- 🖥️ **Lubuntu Host** (AMP, AI, Vaultwarden, NPM, Juicy Dashboard)
+- 🖥️ **Lubuntu Host** (AMP, AI, Vaultwarden, Coolify, Traefik, Juicy Dashboard)
 - 🥧 **Raspberry Pi** (Home Assistant, Flight Tracking, Mealie)
 - 📊 **Juicy Panel** (Status API + front-end dashboard)
 - 🤖 **GitHub Automation** (PDF builds, versioning, releases)
 
 ---
 
-## 🚀 **WORKING SERVICES (March 19, 2026)**
+## 🚀 **WORKING SERVICES (March 20, 2026)**
 
 ### 🖥️ **Lubuntu Host (juicy-server) - 104.8.77.206**
 | Service | URL | Port | Status |
 |---------|-----|------|--------|
 | AMP Game Servers | `https://amp.jkeasy.com` | 8080 | ✅ Working |
-| Open WebUI (AI) | `http://104.8.77.206:3001` | 3001 | ✅ Working |
-| Vaultwarden | `https://vault.jkeasy.com` | 8082 | ✅ Working |
-| Nginx Proxy Manager | `http://104.8.77.206:81` | 81 | ✅ Working |
-| Juicy Dashboard | `https://dashboard.jkeasy.com` | 8085 | ✅ Working |
+| Open WebUI (AI) | `https://ai.jkeasy.com` | 3000 | ✅ Working |
+| Vaultwarden | `https://vault.jkeasy.com` | (Coolify) | ✅ Working |
+| Coolify | `http://104.8.77.206:8000` | 8000 | ✅ Working |
+| Juicy Dashboard | `https://dashboard.jkeasy.com` | 8085 | ✅ Working (via Traefik) |
 | Status API | Internal | 5000 | ✅ Working |
+| Traefik Proxy | `http://104.8.77.206` | 80/443 | ✅ Working |
 
 ### 🥧 **Raspberry Pi (juicypi) - 192.168.1.200**
 | Service | URL | Port | Status |
@@ -42,14 +43,13 @@ A complete infrastructure playbook for building and maintaining the **Juicy Serv
 | Port | Service | Purpose |
 |------|---------|---------|
 | 22 | SSH | Remote access |
-| 80 | HTTP | Nginx Proxy Manager |
-| 81 | NPM Admin | NPM web UI |
-| 443 | HTTPS | NPM SSL |
-| 3001 | Open WebUI | AI chat interface |
-| 5000 | Status API | Backend for dashboard |
+| 80 | HTTP | Traefik (redirects to HTTPS) |
+| 443 | HTTPS | Traefik with SSL |
+| 8000 | Coolify | PaaS manager |
 | 8080 | AMP | Game servers |
-| 8082 | Vaultwarden | Password manager |
 | 8085 | Juicy Dashboard | Main status dashboard |
+| 5000 | Status API | Backend for dashboard |
+| 3000 | Open WebUI | AI chat interface |
 
 ### Raspberry Pi Ports
 | Port | Service | Purpose |
@@ -72,24 +72,16 @@ A complete infrastructure playbook for building and maintaining the **Juicy Serv
 - **DHCP Lease**: 99 days (prevents renewal drops)
 - **DHCP Range**: `192.168.1.64 - 192.168.1.253`
 - **DNS**: `192.168.1.254`
+- **Port Forwarding**: Ports 80, 443 forwarded to `104.8.77.206`
 
-### WiFi Configuration
-| Device | Band | SSID | Status |
-|--------|------|------|--------|
-| Lubuntu Server | 2.4 GHz | `ATTwyKq7BZ` | ✅ Fixed |
-| Raspberry Pi | 2.4 GHz | `ATTwyKq7BZ` | ✅ Locked via BSSID |
-
-**Pi WiFi Lock Configuration:**
+### Firewall Rules (UFW)
 ```bash
-# /etc/wpa_supplicant/wpa_supplicant.conf
-ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-update_config=1
-country=US
-
-network={
-    ssid="ATTwyKq7BZ"
-    psk="t8xz9t73imsw"
-    bssid=D0:FC:D0:76:6B:44
-    frequency=2412
-    scan_freq=2412
-}
+sudo ufw allow ssh
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow 8000/tcp
+sudo ufw allow 8080/tcp
+sudo ufw allow 8085/tcp
+sudo ufw allow 3000/tcp
+sudo ufw allow 5000/tcp
+sudo ufw --force enable
