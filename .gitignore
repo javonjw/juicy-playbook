@@ -26,4 +26,6 @@ build/
 # Secrets (never commit)
 secrets.env
 *.key
-*.pem
+*.pem"current_*.txt" 
+"JUICY-FLEET.txt" 
+"*_server.txt" 
