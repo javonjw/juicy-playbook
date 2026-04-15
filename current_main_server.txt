@@ -1,0 +1,7 @@
+NAMES           IMAGE                                PORTS
+open-webui      ghcr.io/open-webui/open-webui:main   0.0.0.0:8084->8080/tcp, [::]:8084->8080/tcp
+ollama          ollama/ollama                        0.0.0.0:11434->11434/tcp, [::]:11434->11434/tcp
+nextcloud-app   nextcloud:latest                     127.0.0.1:8086->80/tcp
+redis           redis:7                              6379/tcp
+nextcloud-db    postgres:16                          5432/tcp
+vaultwarden     vaultwarden/server                   
