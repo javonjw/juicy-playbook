@@ -1,6 +1,0 @@
-NAMES           IMAGE                                             PORTS
-portainer       portainer/portainer-ce:latest                     8000/tcp, 9443/tcp, 0.0.0.0:9000->9000/tcp
-watchtower      containrrr/watchtower:latest                      8080/tcp
-nodered         nodered/node-red:latest                           0.0.0.0:1880->1880/tcp
-homeassistant   homeassistant/raspberrypi4-homeassistant:stable   
-uptime-kuma     louislam/uptime-kuma                              0.0.0.0:3001->3001/tcp
